@@ -9,7 +9,6 @@ Burg Kurg Package Manager
 
 ToDo:
 
-- Move package to server's `plugins` folder
 - Implement self-updating
 - Implement server software updating
 - Easy method to manually add packages to `installed.csv`
