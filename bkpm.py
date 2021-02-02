@@ -3,6 +3,7 @@ import csv
 import urllib.request
 import sys, getopt
 import shutil
+import os
 
 version='1.0-alpha'
 plugin_dir='/home/pj/FakeServer/plugins'
@@ -13,7 +14,7 @@ print(f"Burg Kurg Package Manager version {version}\n")
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"hi:lu:a",["help","install=","update-list","update","update-all"])
+        opts, args = getopt.getopt(argv,"hi:lu:ar:",["help","install=","update-list","update","update-all","remove="])
     except getopt.GetoptError:
         print(f'Bad syntax')
         sys.exit(2)
@@ -31,6 +32,9 @@ def main(argv):
             update_pkg(package)
         elif opt in ('-a','--update-all'):
             update_all_pkg()
+        elif opt in ('-r','--remove'):
+            package = arg
+            remove_pkg(package)
 #Read list of installed packages...
 def read_installed():
     installed = open('installed.csv','r')
@@ -70,7 +74,7 @@ def install_pkg(package):
             found = True
             get_pkg_description(package,row)
             print(f'Install {package} (y/N)?')
-            install_yn = (input('BKPKG>')).lower()
+            install_yn = (input('BKPM>')).lower()
             if install_yn == 'y':
                 print(f'Downloading {row[0]} from {row[1]}...')
                 urllib.request.urlretrieve(row[1],f'./download/{row[0]}.jar')
@@ -105,7 +109,7 @@ def update_pkg(package):
         for row in database_csv:
             if package == row[0] and pkg_version != row[4]:
                 print(f'Update for {package} is available!\n\nCurrent version: {pkg_version}\nNew Version: {row[4]}\n\nUpdate {package} (y/N)?')
-                update_yn = (input('BKPKG>')).lower()
+                update_yn = (input('BKPM>')).lower()
                 if update_yn == 'y':
                     pkg_version_new = row[4]
                     print(f'Downloading {row[0]} from {row[1]}...')
@@ -144,6 +148,36 @@ def update_all_pkg():
             pass
         else:
             update_pkg(row[0])
+
+def remove_pkg(package):
+    with open('installed.csv','r') as installed:
+        installed_csv = csv.reader(installed)
+        installed_lines = list(installed_csv)
+        found = False
+        complete = False
+        for i in range(len(installed_lines)):
+            #I know this try-except method is pretty janky. I wanna clean this up soon!
+            try:
+                if package==installed_lines[i][0]:
+                    found = True
+                    print(f'Are you sure you want to uninstall {package}? (y/N)')
+                    uninstall_yn = input('BKPM>')
+                    if uninstall_yn == 'y':
+                        print(f'Removing {package}...')
+                        #os.remove('{plugin_dir}/{package}.jar')
+                        print('Saving to installed.csv...')
+                        with open('installed.csv','w') as installed_w:
+                            installed_lines.pop(i)
+                            installed_csv_writer = csv.writer(installed_w)
+                            installed_csv_writer.writerows(installed_lines)
+                            complete = True
+                    else:
+                        print('Nothing was uninstalled.')
+            except:
+                pass
+        if complete == False and found == False:
+            print(f'ERROR: {package} is not installed.')
+
 
 main(sys.argv[1:])
 
