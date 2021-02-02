@@ -9,6 +9,8 @@ version='1.0-alpha'
 plugin_dir='/home/pj/FakeServer/plugins'
 
 
+help_str = f'Burg Kurg Package Manager (bkpm) version {version}\n\nOptions:\n   -i, --install: Install a new package\n   -l, --update-list: Update the package list. You MUST do this first in order to update packages!\n   -u, --update: Update a package\n   -a, --update-all: Update all installed packages\n   -r, --remove: Remove a package\n   -h, --help: Show this help dialog.'
+
 print(f"WARNING: bkpm is not complete yet and is still missing several features. It is not ready for production use!")
 print(f"Burg Kurg Package Manager version {version}\n")
 
@@ -16,11 +18,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"hi:lu:ar:",["help","install=","update-list","update","update-all","remove="])
     except getopt.GetoptError:
-        print(f'Bad syntax')
+        print(f'Bad syntax; showing help:\n{help_str}')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
-            print('Help coming soon!')
+            print(help_str)
         elif opt in ('-i','--install'):
             package = arg
             print(f'Searching for {package}...')
