@@ -1,14 +1,14 @@
-#Burg Kurg Package Manager (bkpkg)
+#Burg Kurg Package Manager (bkpm)
 import csv
 import urllib.request
 import sys, getopt
 import shutil
 
 version='1.0-alpha'
-plugin_dir=''
+plugin_dir='/home/pj/FakeServer/plugins'
 
 
-print(f"WARNING: bkpkg is not complete yet and is still missing several features. It is not ready for production use!")
+print(f"WARNING: bkpm is not complete yet and is still missing several features. It is not ready for production use!")
 print(f"Burg Kurg Package Manager version {version}\n")
 
 def main(argv):
@@ -41,7 +41,7 @@ def read_installed():
 #Update list.csv
 def update_db():
     print('Updating list.csv...')
-    urllib.request.urlretrieve('https://github.com/PJBeans/bkpkg/raw/main/list.csv','./list.csv')
+    urllib.request.urlretrieve('https://github.com/PJBeans/bkpm/raw/main/list.csv','./list.csv')
     print('Finished updating!')
 
     
