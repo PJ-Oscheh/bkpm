@@ -57,6 +57,8 @@ def read_installed():
 def update_db():
     print('Updating list.csv...')
     urllib.request.urlretrieve('https://github.com/PJBeans/bkpm/raw/main/list.csv','./list.csv')
+    print('Updating community.csv...')
+    urllib.request.urlretrieve('https://github.com/PJBeans/bkpm/raw/main/community.csv','./community.csv')
     print('Finished updating!')
 
     
