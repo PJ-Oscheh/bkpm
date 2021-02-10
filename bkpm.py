@@ -9,34 +9,43 @@ version='1.0-alpha'
 plugin_dir='/home/pj/FakeServer/plugins'
 
 
-help_str = f'Burg Kurg Package Manager (bkpm) version {version}\n\nOptions:\n   -i, --install: Install a new package\n   -l, --update-list: Update the package list. You MUST do this first in order to update packages!\n   -u, --update: Update a package\n   -a, --update-all: Update all installed packages\n   -r, --remove: Remove a package\n   -h, --help: Show this help dialog.'
+help_str = f'Burg Kurg Package Manager (bkpm) version {version}\n\nOptions:\n   -i, --install: Install a new package\n   -l, --update-list: Update the package list. You MUST do this first in order to update packages!\n   -u, --update: Update a package\n   -a, --update-all: Update all installed packages\n   -r, --remove: Remove a package\n   -h, --help: Show this help dialog.\n   -s, --source: Specify source for package (Official, Community, Custom)'
 
 print(f"WARNING: bkpm is not complete yet and is still missing several features. It is not ready for production use!")
 print(f"Burg Kurg Package Manager version {version}\n")
 
 def main(argv):
+    source = 'ALL'
     try:
-        opts, args = getopt.getopt(argv,"hi:lu:ar:",["help","install=","update-list","update","update-all","remove="])
+        opts, args = getopt.getopt(argv,"hi:lu:ar:s:",["help","install=","update-list","update","update-all","remove=","source="])
     except getopt.GetoptError:
         print(f'Bad syntax; showing help:\n{help_str}')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
             print(help_str)
+        elif opt in ('-s','--source'):
+            if arg.lower() == 'official' or arg == 'community' or arg == 'custom':
+                source = arg.lower()
+            else:
+                print('ERROR: Invalid source. Valid sources are:\nOfficial - Packages come from their developer\'s source\nCommunity - Packages come from a source not owned by the developer\nCustom - Packages come from sources you provide.')
+                sys.exit(2)
         elif opt in ('-i','--install'):
             package = arg
             print(f'Searching for {package}...')
-            install_pkg(package)
+            install_pkg(package,source)
         elif opt in ('-l','--update-list'):
             update_db()
         elif opt in ('-u','--update'):
             package = arg
-            update_pkg(package)
+            update_pkg(package,source)
         elif opt in ('-a','--update-all'):
             update_all_pkg()
         elif opt in ('-r','--remove'):
             package = arg
             remove_pkg(package)
+        
+
 #Read list of installed packages...
 def read_installed():
     installed = open('installed.csv','r')
@@ -56,43 +65,69 @@ def update_db():
 def get_pkg_description(package,row):
     print(f'Name: {row[0]}\nSource: {row[1]}\nAuthor: {row[2]}\nDescription: {row[3]}\nVersion: {row[4]}')
 
+#source = 'ALL' #If no source is provided, default to ALL and check each source until the package is found.
 #Install a plugin
-def install_pkg(package):
-    database = open('list.csv')
-    database_csv = csv.reader(database)
+def install_pkg(package,source):
+    
     installed = open('installed.csv','r')
     installed_csv = csv.reader(installed)
     installed_append = open('installed.csv','a')
     installed_csv_append = csv.writer(installed_append)
 
+    source_list = ['list.csv','community.csv','custom.csv']
+
+    if source == 'ALL':
+        goThru = 3 #If no source is specified, search them all.
+    else:
+        goThru = 1 #By default, search database once.
+
+
+    if source == 'official':
+        database = open('list.csv')
+
+    elif source == 'community':
+        database = open('community.csv')
+    
+    elif source == 'custom':
+        database = open('custom.csv')
+
+   
     found = False
     for row in installed_csv:
         if package == row[0]:
             print(f'{package} is already installed.')
             sys.exit(2)
-    for row in database_csv:
-        if package == row[0]:
-            print(f'Found {package}!')
-            found = True
-            get_pkg_description(package,row)
-            print(f'Install {package} (y/N)?')
-            install_yn = (input('BKPM>')).lower()
-            if install_yn == 'y':
-                print(f'Downloading {row[0]} from {row[1]}...')
-                urllib.request.urlretrieve(row[1],f'./download/{row[0]}.jar')
-                print(f'Moving {row[0]}.jar to {plugin_dir}...')
-                shutil.move(f'./download/{row[0]}.jar',f'{plugin_dir}/{row[0]}.jar')
-                print('Saving to installed.csv...')
-                newRow = [row[0],row[4]]
-                installed_csv_append.writerow(newRow)
-            else:
-                print('Installation aborted!')
+    
+    for i in range(0,goThru):
+        if goThru != 1:
+            database = open(source_list[i])
+            database_csv = csv.reader(database)
+        else:
+            database_csv = csv.reader(database)
+        for row in database_csv:
+            if package == row[0]:
+                print(f'Found {package}!')
+                found = True
+                get_pkg_description(package,row)
+                print(f'Install {package} (y/N)?')
+                install_yn = (input('BKPM>')).lower()
+                if install_yn == 'y':
+                    print(f'Downloading {row[0]} from {row[1]}...')
+                    urllib.request.urlretrieve(row[1],f'./download/{row[0]}.jar')
+                    print(f'Moving {row[0]}.jar to {plugin_dir}...')
+                    shutil.move(f'./download/{row[0]}.jar',f'{plugin_dir}/{row[0]}.jar')
+                    print('Saving to installed.csv...')
+                    newRow = [row[0],row[4]]
+                    installed_csv_append.writerow(newRow)
+                else:
+                    print('Installation aborted!')
+                    sys.exit(0)
             
     if found == False:
         print(f'ERROR: Could not find {package}. :(')
 
 #Update a plugin
-def update_pkg(package):
+def update_pkg(package,source):
     database = open('list.csv')
     database_csv = csv.reader(database)
     installed = open('installed.csv','r')
@@ -101,47 +136,77 @@ def update_pkg(package):
     #installed_write_csv = csv.reader(installed_write)
     found = False
     print(f'Checking if {package} can be updated...')
+  
     #Get currently installed version
     for row in installed_csv:
         if package == row[0]:
             pkg_version = row[1]
             found = True
-    #Get list.csv version
+
+
+    #Get database version
+    source_list = ['list.csv','community.csv','custom.csv']
+
+    if source == 'ALL':
+        goThru = 3 #If no source is specified, search them all.
+    else:
+        goThru = 1 #By default, search database once.
+
+
+    if source == 'official':
+        database = open('list.csv')
+
+    elif source == 'community':
+        database = open('community.csv')
+    
+    elif source == 'custom':
+        database = open('custom.csv')
+    
+
     if found == True:
-        for row in database_csv:
-            if package == row[0] and pkg_version != row[4]:
-                print(f'Update for {package} is available!\n\nCurrent version: {pkg_version}\nNew Version: {row[4]}\n\nUpdate {package} (y/N)?')
-                update_yn = (input('BKPM>')).lower()
-                if update_yn == 'y':
-                    pkg_version_new = row[4]
-                    print(f'Downloading {row[0]} from {row[1]}...')
-                    urllib.request.urlretrieve(row[1],f'./download/{row[0]}.jar')
-                    print(f'Moving {row[0]}.jar to {plugin_dir}...')
-                    shutil.move(f'./download/{row[0]}.jar',f'{plugin_dir}/{row[0]}.jar')
-                    print('Saving to installed.csv...')
-                    
+        for i in range(0,goThru):
+            if goThru != 1:
+                
+                database = open(source_list[i])
+                database_csv = csv.reader(database)
+            else:
+                database_csv = csv.reader(database)
+            for row in database_csv:
 
-                    i = 0 #Since CSV rows make for loops wonky, we manually set up our iteration.
-                    installed = open('installed.csv','r') 
-                    installed_csv = csv.reader(installed)
-                    for row in installed_csv:
-                        if package == row[0]:
-                            newRow = [row[0],pkg_version_new]
-                            installed = open('installed.csv','r') 
-                            installed_csv = csv.reader(installed)
-                            installed_lines = list(installed_csv)
-                            installed_lines[i][1] = pkg_version_new
-                            installed_write = open('installed.csv','w')
-                            installed_write_csv = csv.writer(installed_write)
-                            installed_write_csv.writerows(installed_lines)
+                if package == row[0] and pkg_version != row[4]:
+                    print(f'Update for {package} is available!\n\nCurrent version: {pkg_version}\nNew Version: {row[4]}\n\nUpdate {package} (y/N)?')
+                    update_yn = (input('BKPM>')).lower()
+                    if update_yn == 'y':
+                        pkg_version_new = row[4]
+                        print(f'Downloading {row[0]} from {row[1]}...')
+                        urllib.request.urlretrieve(row[1],f'./download/{row[0]}.jar')
+                        print(f'Moving {row[0]}.jar to {plugin_dir}...')
+                        shutil.move(f'./download/{row[0]}.jar',f'{plugin_dir}/{row[0]}.jar')
+                        print('Saving to installed.csv...')
+                        
 
-                        else:
-                            i+=1
-            elif package == row[0] and pkg_version == row[4]:
-                print(f'{package} is up to date.')
+                        i = 0 #Since CSV rows make for loops wonky, we manually set up our iteration.
+                        installed = open('installed.csv','r') 
+                        installed_csv = csv.reader(installed)
+                        for row in installed_csv:
+                            if package == row[0]:
+                                newRow = [row[0],pkg_version_new]
+                                installed = open('installed.csv','r') 
+                                installed_csv = csv.reader(installed)
+                                installed_lines = list(installed_csv)
+                                installed_lines[i][1] = pkg_version_new
+                                installed_write = open('installed.csv','w')
+                                installed_write_csv = csv.writer(installed_write)
+                                installed_write_csv.writerows(installed_lines)
+
+                            else:
+                                i+=1
+                elif package == row[0] and pkg_version == row[4]:
+                    print(f'{package} is up to date.')
+            #if package not in str(database_lines):      
+            #    print(f'ERROR: {package} not found in {source}')
     elif found == False:
         print(f'ERROR: {package} isn\'t installed!')
-
 def update_all_pkg():
     installed = open('installed.csv')
     installed_csv = csv.reader(installed)

@@ -1,8 +1,8 @@
 Plugin Name,Source,Author,Description,Version
-essentialsx,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,"Core features: messages, teleports, homes, warps, and more",2.19.0-dev+59-f1ef21e
-essentialsx-antibuild,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXAntiBuild-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Restrict building with permissions,2.19.0-dev+59-f1ef21e
-essentialsx-protect,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXProtect-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Configurable world protection,2.19.0-dev+59-f1ef21e
-essentialsx-chat,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXChat-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Chat formatting & local chat,2.19.0-dev+59-f1ef21e
-essentialsx-spawn,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXSpawn-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Fine-grained spawnpoint control,2.19.0-dev+59-f1ef21e
-essentialsx-geoip,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXGeoIP-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Geographic player lookup,2.19.0-dev+59-f1ef21e
-essentialsx-xmpp,https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsXXMPP-2.19.0-dev+59-f1ef21e.jar,EssentialsX Team,Jabber server integration,2.19.0-dev+59-f1ef21e
+essentialsx,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsX-2.18.2.0.jar,EssentialsX Team,"Core features: messages, teleports, homes, warps, and more",2.18.2.0
+essentialsx-antibuild,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXAntiBuild-2.18.2.0.jar,EssentialsX Team,Restrict building with permissions,2.18.2.0
+essentialsx-protect,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXProtect-2.18.2.0.jar,EssentialsX Team,Configurable world protection,2.18.2.0
+essentialsx-chat,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXChat-2.18.2.0.jar,EssentialsX Team,Chat formatting & local chat,2.18.2.0
+essentialsx-spawn,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXSpawn-2.18.2.0.jar,EssentialsX Team,Fine-grained spawnpoint control,2.18.2.0
+essentialsx-geoip,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXGeoIP-2.18.2.0.jar,EssentialsX Team,Geographic player lookup,2.18.2.0
+essentialsx-xmpp,https://github.com/EssentialsX/Essentials/releases/download/2.18.2/EssentialsXXMPP-2.18.2.0.jar,EssentialsX Team,Jabber server integration,2.18.2.0
