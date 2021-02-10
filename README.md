@@ -1,4 +1,4 @@
-# bkpkg
+# BKPM
 Burg Kurg Package Manager
 
 **NOTE:** BKPM is still under development. Currently, it can:
