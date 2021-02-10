@@ -35,6 +35,6 @@ Don't add plugins to the custom list (`custom.csv`); that is for any sources an 
 
 
 
-The plugins's source must be manually updated in the lists, but the lists can be updated from BKPM, so we encourage our users to create a Pull Request to update source links (if necessary) and version strings, so that those changes can be sent to everyone!
+The plugins's source link and version string must be manually updated in the lists, but the lists can be updated from BKPM, so we encourage our users to create a Pull Request to update source links (if necessary) and version strings, so that those changes can be sent to everyone!
 
 Burg Kurg is my own server, and thus I opted to name this program after it. However, this program is for everyone, and contains no advertising for my server.
