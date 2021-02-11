@@ -1,6 +1,8 @@
 # BKPM
 Burg Kurg Package Manager
 
+BKPM is a package manager for Minecraft server admins to easily install and update plugins (and soon, the server software itself!). Feel free to create a Pull Request to add desired plugins! However, please add desired plugins to the correct list:
+
 **NOTE:** BKPM is still under development. Currently, it can:
 
 - Download packages given their source is in `list.csv`, `community.csv`, or `custom.csv` and record said package and its version in `installed.csv`.
@@ -14,7 +16,6 @@ Burg Kurg Package Manager
 - Easy method to manually add packages to `installed.csv`
 - More, probably
 
-BKPM is a package manager for Minecraft server admins to easily install and update plugins (and soon, the server software itself!). Feel free to create a Pull Request to add desired plugins! However, please add desired plugins to the correct list:
 
 # Which list do I add a plugin to?
 ## Official
