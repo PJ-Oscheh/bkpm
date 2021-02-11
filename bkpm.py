@@ -17,7 +17,7 @@ print(f"Burg Kurg Package Manager version {version}\n")
 def main(argv):
     source = 'ALL'
     try:
-        opts, args = getopt.getopt(argv,"hi:lu:ar:s:",["help","install=","update-list","update","update-all","remove=","source="])
+        opts, args = getopt.getopt(argv,"hi:lu:ar:s:m:",["help","install=","update-list","update","update-all","remove=","source=","manual-install="])
     except getopt.GetoptError:
         print(f'Bad syntax; showing help:\n{help_str}')
         sys.exit(2)
@@ -44,6 +44,9 @@ def main(argv):
         elif opt in ('-r','--remove'):
             package = arg
             remove_pkg(package)
+        elif opt in ('-m','--manual-install='):
+            package = arg
+            manual_install(package)
         
 
 #Read list of installed packages...
@@ -68,6 +71,7 @@ def get_pkg_description(package,row):
     print(f'Name: {row[0]}\nSource: {row[1]}\nAuthor: {row[2]}\nDescription: {row[3]}\nVersion: {row[4]}')
 
 #source = 'ALL' #If no source is provided, default to ALL and check each source until the package is found.
+
 #Install a plugin
 def install_pkg(package,source):
     
@@ -127,6 +131,29 @@ def install_pkg(package,source):
             
     if found == False:
         print(f'ERROR: Could not find {package}. :(')
+
+#Manually add a plugin
+def manual_install(package):
+    installed = open('installed.csv','a')
+    installed_csv = csv.writer(installed)
+    print(f'Searching for {package}.')
+    if os.path.exists(package):
+        package_name = os.path.basename(package) 
+        package_name = package_name[:-4].lower() #Remove '.jar' from end of plugin name and make name lowercase, for consistency and to ensure compatibility with the rest of BKPM's features. Since these should all be .jar files, this hard-coded method should be fine.
+        print(f'Found {package}.\nWARNING: You\'re responsible for updating this package as it being installed from a local source outside of the BKPM lists.\nInstall {package}? (y/N)?')
+        choice = input('BKPM>')
+        if choice.lower() == 'y':
+            print(f'Moving {package_name} to {plugin_dir}...')
+            shutil.move(f'{package}',f'{plugin_dir}/{package_name}.jar')
+            print('Saving to installed.csv...')
+            newRow = [package_name,'?']
+            installed_csv.writerow(newRow)
+        else:
+            print('Installation aborted!')
+    else:
+        print(f'ERROR: {package} not found. Please ensure you\'ve entered the complete path to the package!')
+
+#Add to custom.csv
 
 #Update a plugin
 def update_pkg(package,source):
@@ -216,7 +243,7 @@ def update_all_pkg():
         if row[0] == "Plugin Name":
             pass
         else:
-            update_pkg(row[0])
+            update_pkg(row[0],'ALL')
 
 def remove_pkg(package):
     with open('installed.csv','r') as installed:
@@ -233,7 +260,7 @@ def remove_pkg(package):
                     uninstall_yn = input('BKPM>')
                     if uninstall_yn == 'y':
                         print(f'Removing {package}...')
-                        #os.remove('{plugin_dir}/{package}.jar')
+                        os.remove(f'{plugin_dir}/{package}.jar')
                         print('Saving to installed.csv...')
                         with open('installed.csv','w') as installed_w:
                             installed_lines.pop(i)
